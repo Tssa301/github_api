@@ -1,15 +1,26 @@
+import axios from 'axios';
 import ResultCard from 'components/ResultCard/resultCard';
 import { useState } from 'react';
 
 import './styles.css';
 
 type FormData = {
-  gitApi: string;
+  username: string;
+};
+
+type GitApi = {
+  avatar_url: string;
+  url: string;
+  followers: string;
+  location: string;
+  name: string;
 };
 
 const GitSearch = () => {
+  const [gitApi, setGitApi] = useState<GitApi>();
+
   const [formData, setFormData] = useState<FormData>({
-    gitApi: '',
+    username: '',
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,7 +32,17 @@ const GitSearch = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formData);
+
+    axios
+      .get(`https://api.github.com/users/${formData.username}`)
+      .then((response) => {
+        setGitApi(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        setGitApi(undefined);
+        console.log(error);
+      });
   };
 
   return (
@@ -32,10 +53,10 @@ const GitSearch = () => {
           <div className="form-container">
             <input
               type="text"
-              name="gitApi"
+              name="username"
               className="search-input"
               placeholder="Enter your Github username"
-              value={formData.gitApi}
+              value={formData.username}
               onChange={handleChange}
             />
             <button type="submit" className="btn btn-primary search-button">
@@ -44,19 +65,22 @@ const GitSearch = () => {
           </div>
         </form>
       </div>
-
-      <div className="container info-container">
-        <div className="container img-container">
-          <img src="https://avatars.githubusercontent.com/u/64556958?v=4" alt=""/>
-        </div>
-        <div className="container description-container">
-          <h6>Information</h6>
-          <ResultCard title="Profile:"description="https://api.github.com/users/Tssa301"/>
-          <ResultCard title="Followers:" description="45" />
-          <ResultCard title="Location:" description="Lisbon" />
-          <ResultCard title="Name:" description="Tiago Ssa" />
-        </div>
-      </div>
+      {gitApi && (
+        <>
+          <div className="container info-container">
+            <div className="container img-container">
+              <img src={gitApi?.avatar_url} alt="" />
+            </div>
+            <div className="container description-container">
+              <h6>Information</h6>
+              <ResultCard title="Profile:" description={gitApi.url} />
+              <ResultCard title="Followers:" description={gitApi.followers} />
+              <ResultCard title="Location:" description={gitApi.location} />
+              <ResultCard title="Name:" description={gitApi.name} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
