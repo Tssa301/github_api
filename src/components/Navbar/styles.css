@@ -1,0 +1,10 @@
+.main-nav {
+  padding-left: 40px;
+  min-height: 50px;
+  background-color: #1890FF; 
+}
+
+.text {
+  color: #fff;
+  font-weight: normal;
+}
