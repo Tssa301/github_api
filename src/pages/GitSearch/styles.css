@@ -29,6 +29,10 @@
   margin: 25px 0px 25px 25px;
 }
 
+.img-container img{
+  border-radius: 100%;
+}
+
 .description-container {
   background-color: #fff;
   margin: 25px;

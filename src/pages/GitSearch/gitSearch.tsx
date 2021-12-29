@@ -1,6 +1,7 @@
 import axios from 'axios';
 import ResultCard from 'components/ResultCard/resultCard';
 import { useState } from 'react';
+import InfoLoader from './InfoLoader/infoLoader';
 
 import './styles.css';
 
@@ -17,6 +18,7 @@ type GitApi = {
 };
 
 const GitSearch = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [gitApi, setGitApi] = useState<GitApi>();
 
   const [formData, setFormData] = useState<FormData>({
@@ -33,6 +35,7 @@ const GitSearch = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    setIsLoading(true);
     axios
       .get(`https://api.github.com/users/${formData.username}`)
       .then((response) => {
@@ -42,6 +45,9 @@ const GitSearch = () => {
       .catch((error) => {
         setGitApi(undefined);
         console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -65,7 +71,7 @@ const GitSearch = () => {
           </div>
         </form>
       </div>
-      {gitApi && (
+      {isLoading ? <InfoLoader/> : (gitApi && (
         <>
           <div className="container info-container">
             <div className="container img-container">
@@ -80,7 +86,7 @@ const GitSearch = () => {
             </div>
           </div>
         </>
-      )}
+      ))}
     </div>
   );
 };
